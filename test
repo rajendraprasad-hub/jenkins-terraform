@@ -1,0 +1,23 @@
+pipeline {
+    agent any
+    
+    stages {
+        stage('checkout') {
+            steps {
+            git branch: 'main',
+                url: 'https://github.com/rajendraprasad-hub/jenkins-terraform.git'
+          }
+        }
+        stage('Terraform') {
+            steps {
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'xxxxxxx']]) {
+                    sh '''
+                    terraform init
+                    terraform plan -out=tfplan
+                    terraform apply -auto-approve tfplan
+                    '''
+                }
+            }
+        }
+    }
+}
